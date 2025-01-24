@@ -35,17 +35,21 @@ export default function ToolCard({ tool }: ToolCardProps) {
         </p>
 
         <div className="mt-4">
-          <h4 className="font-medium text-gray-900 dark:text-white mb-2">Features</h4>
-          <div className="flex flex-wrap gap-2">
-            {tool.features.map((feature, index) => (
-              <span
-                key={index}
-                className="px-2 py-1 bg-gray-100 dark:bg-dark-300 text-gray-700 dark:text-gray-300 text-sm rounded"
-              >
-                {feature}
-              </span>
-            ))}
-          </div>
+          {tool.features && tool.features.length > 0 && (
+            <>
+              <h4 className="font-medium text-gray-900 dark:text-white mb-2">Features</h4>
+              <div className="flex flex-wrap gap-2">
+                {tool.features.map((feature, index) => (
+                  <span
+                    key={index}
+                    className="px-2 py-1 bg-gray-100 dark:bg-dark-300 text-gray-700 dark:text-gray-300 text-sm rounded"
+                  >
+                    {feature}
+                  </span>
+                ))}
+              </div>
+            </>
+          )}
         </div>
 
         {tool.avgRating !== undefined && (
