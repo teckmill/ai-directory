@@ -18,8 +18,8 @@ const AI_KEYWORDS = [
 
 function cleanText(text: string) {
   return text
-    .replace(/\s+/g, ' ') // Replace multiple spaces with single space
-    .replace(/[\n\r\t]/g, ' ') // Replace newlines and tabs with space
+    .replace(/\s+/g, ' ')
+    .replace(/[\n\r\t]/g, ' ')
     .trim()
 }
 
