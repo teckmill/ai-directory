@@ -89,16 +89,18 @@ export default function CategoryPage() {
                 </div>
                 <h2 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">{tool.name}</h2>
                 <p className="text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">{tool.description}</p>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {tool.features.map((feature, index) => (
-                    <span 
-                      key={index}
-                      className="px-2 py-1 bg-gray-100 dark:bg-dark-300 text-gray-700 dark:text-gray-300 text-sm rounded"
-                    >
-                      {feature}
-                    </span>
-                  ))}
-                </div>
+                {tool.features && tool.features.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {tool.features.map((feature, index) => (
+                      <span 
+                        key={index}
+                        className="px-2 py-1 bg-gray-100 dark:bg-dark-300 text-gray-700 dark:text-gray-300 text-sm rounded"
+                      >
+                        {feature}
+                      </span>
+                    ))}
+                  </div>
+                )}
                 <Link
                   href={`/tools/${tool.id}`}
                   className="inline-flex items-center text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium group-hover:translate-x-1 transition-transform"
