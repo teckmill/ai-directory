@@ -6,7 +6,9 @@ type ToolComparisonProps = {
 }
 
 export default function ToolComparison({ tools }: ToolComparisonProps) {
-  const allFeatures = Array.from(new Set(tools.flatMap(tool => tool.features))).sort()
+  const allFeatures = Array.from(new Set(
+    tools.flatMap(tool => tool.features || [])
+  )).sort()
 
   return (
     <div className="overflow-x-auto">
@@ -115,14 +117,12 @@ export default function ToolComparison({ tools }: ToolComparisonProps) {
               <td className="p-4 border-b dark:border-gray-700">{feature}</td>
               {tools.map(tool => (
                 <td key={tool.id} className="p-4 border-b dark:border-gray-700">
-                  {tool.features.includes(feature) ? (
+                  {tool.features && tool.features.includes(feature) ? (
                     <svg className="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                   ) : (
-                    <svg className="w-5 h-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                    </svg>
+                    <span className="text-gray-400">—</span>
                   )}
                 </td>
               ))}
