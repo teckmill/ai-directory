@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-white dark:bg-gray-900;
+  }
+}
+
+:root {
+  color-scheme: light dark;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+html {
+  min-height: 100%;
+  background: transparent;
+}
+
+body {
+  min-height: 100vh;
+}
+
+/* Force dark mode colors */
+.dark body {
+  background: rgb(17, 24, 39);
+  color: rgb(243, 244, 246);
+} 
