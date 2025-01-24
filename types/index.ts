@@ -1,10 +1,9 @@
-export interface Tool {
+export type Tool = {
   id: string
   name: string
   description: string
+  logo_url: string
   website_url: string
-  logo_url?: string
-  category_id: string
   pricing: 'free' | 'freemium' | 'paid'
   pricing_details?: string
   features?: string[]
@@ -12,14 +11,23 @@ export interface Tool {
   twitter_handle?: string
   documentation_url?: string
   demo_url?: string
+  category_id?: string
+  submitted_at: string
   status?: 'pending' | 'approved' | 'rejected'
-  submitted_at?: string
-  enriched?: boolean
+}
+
+export type ToolWithDetails = Tool & {
+  category?: Category
+  reviews?: Review[]
+  avgRating?: number
 }
 
 export type Category = {
   id: string
   name: string
+  slug: string
+  description: string
+  icon: string
 }
 
 export type Review = {

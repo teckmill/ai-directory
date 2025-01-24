@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import * as cheerio from 'cheerio'
 import { getCachedData, setCachedData } from '../../utils/cache'
 import { rateLimit } from '../../utils/rate-limit'
+import { Tool } from '../../types'
 
 // AI-specific patterns
 const AI_KEYWORDS = [
@@ -51,7 +52,7 @@ async function detectAIFeatures($: cheerio.Root): Promise<string[]> {
   return features
 }
 
-async function extractPricing($: cheerio.Root): Promise<string | null> {
+async function extractPricing($: cheerio.Root): Promise<string | undefined> {
   // Look for pricing in multiple locations
   const pricingSelectors = [
     'div:contains("Pricing")',
@@ -100,10 +101,10 @@ async function extractPricing($: cheerio.Root): Promise<string | null> {
     }
   }
 
-  return null
+  return null as any as undefined
 }
 
-async function findGitHubUrl($: cheerio.Root): Promise<string | null> {
+async function findGitHubUrl($: cheerio.Root): Promise<string | undefined> {
   // Look for GitHub links in multiple places
   const githubSelectors = [
     'a[href*="github.com"]',
@@ -126,10 +127,10 @@ async function findGitHubUrl($: cheerio.Root): Promise<string | null> {
     return `https://github.com/${metaRepo}`
   }
 
-  return null
+  return null as any as undefined
 }
 
-async function findTwitterHandle($: cheerio.Root): Promise<string | null> {
+async function findTwitterHandle($: cheerio.Root): Promise<string | undefined> {
   // Look for Twitter/X links in multiple places
   const twitterSelectors = [
     'a[href*="twitter.com"]',
@@ -144,7 +145,7 @@ async function findTwitterHandle($: cheerio.Root): Promise<string | null> {
     const link = $(selector).first().attr('href')
     if (link) {
       const match = link.match(/(?:twitter\.com|x\.com)\/([^/?]+)/)
-      return match ? `@${match[1]}` : null
+      return match ? `@${match[1]}` : undefined
     }
   }
 
@@ -156,10 +157,10 @@ async function findTwitterHandle($: cheerio.Root): Promise<string | null> {
     return `@${match[1]}`
   }
 
-  return null
+  return undefined
 }
 
-async function findDocsUrl($: cheerio.Root, baseUrl: string): Promise<string | null> {
+async function findDocsUrl($: cheerio.Root, baseUrl: string): Promise<string | undefined> {
   // Look for documentation links in multiple places
   const docSelectors = [
     'a:contains("Docs")',
@@ -200,7 +201,7 @@ async function findDocsUrl($: cheerio.Root, baseUrl: string): Promise<string | n
     }
   }
 
-  return null
+  return null as any as undefined
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -248,7 +249,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const $ = cheerio.load(html)
 
     // Extract info from meta tags and content
-    const toolInfo = {
+    const toolInfo: Partial<Tool> = {
       name: cleanText($('meta[property="og:title"]').attr('content') || $('title').text()),
       description: cleanText($('meta[property="og:description"]').attr('content') || 
                             $('meta[name="description"]').attr('content') ||
@@ -256,14 +257,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       logo_url: $('meta[property="og:image"]').attr('content') ||
                $('link[rel="icon"]').attr('href') ||
                '/default-logo.png',
-      pricing_details: await extractPricing($),
-      github_url: await findGitHubUrl($),
-      twitter_handle: await findTwitterHandle($),
-      documentation_url: await findDocsUrl($, url),
-      features: await detectAIFeatures($),
-      ai_keywords: AI_KEYWORDS.filter(keyword => 
-        $('body').text().toLowerCase().includes(keyword)
-      )
+      pricing_details: (await extractPricing($)) || undefined,
+      github_url: (await findGitHubUrl($)) || undefined,
+      twitter_handle: (await findTwitterHandle($)) || undefined,
+      documentation_url: (await findDocsUrl($, url)) || undefined,
+      features: await detectAIFeatures($)
     }
 
     // Validate URLs and data
@@ -275,11 +273,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     if (toolInfo.github_url && !validateUrl(toolInfo.github_url)) {
-      toolInfo.github_url = null
+      toolInfo.github_url = undefined
     }
 
     if (toolInfo.twitter_handle && !validateTwitterHandle(toolInfo.twitter_handle)) {
-      toolInfo.twitter_handle = null
+      toolInfo.twitter_handle = undefined
     }
 
     // Cache the result

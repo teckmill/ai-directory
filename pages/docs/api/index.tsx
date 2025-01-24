@@ -58,13 +58,13 @@ export default function ApiDocs() {
 
               <h3>Base URL</h3>
               <pre className="bg-gray-100 dark:bg-dark-300 p-4 rounded-lg">
-                <code>{config.apiUrl}</code>
+                <code>{config.baseUrl}</code>
               </pre>
 
               <h3>Example Request</h3>
               <pre className="bg-gray-100 dark:bg-dark-300 p-4 rounded-lg overflow-x-auto">
                 <code>
-                  curl -X GET "{config.apiUrl}/tools" \{'\n'}
+                  curl -X GET "{config.baseUrl}/api/tools" \{'\n'}
                   {'  '}-H "Authorization: Bearer YOUR_API_KEY"
                 </code>
               </pre>
