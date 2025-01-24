@@ -76,7 +76,7 @@ export default function ToolSubmissionForm() {
             {toolData.pricing_details && (
               <p><strong>Pricing:</strong> {toolData.pricing_details}</p>
             )}
-            {toolData.features?.length > 0 && (
+            {toolData.features && toolData.features.length > 0 && (
               <p><strong>Features:</strong> {toolData.features.join(', ')}</p>
             )}
           </div>

@@ -6,7 +6,9 @@ import { Tool } from '../../types'
 import Link from 'next/link'
 
 type ToolWithDetails = Tool & {
-  categories: { name: string }
+  category: { 
+    name: string 
+  }
   reviews: {
     rating: number
     comment: string
@@ -108,7 +110,7 @@ export default function ToolDetail() {
                       {tool.pricing.charAt(0).toUpperCase() + tool.pricing.slice(1)}
                     </span>
                     <span className="text-gray-500 dark:text-gray-400">
-                      {tool.categories?.name}
+                      {tool.category?.name}
                     </span>
                   </div>
                 </div>
@@ -133,7 +135,7 @@ export default function ToolDetail() {
                   Features
                 </h2>
                 <ul className="space-y-2">
-                  {tool.features.map((feature, index) => (
+                  {tool.features?.map((feature, index) => (
                     <li key={index} className="flex items-center text-gray-600 dark:text-gray-400">
                       <svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -215,11 +217,11 @@ export default function ToolDetail() {
                       </dd>
                     </div>
                   )}
-                  {tool.launch_date && (
+                  {tool.submitted_at && (
                     <div>
-                      <dt className="text-gray-500 dark:text-gray-400">Launch Date</dt>
+                      <dt className="text-gray-500 dark:text-gray-400">Submitted</dt>
                       <dd className="text-gray-900 dark:text-white">
-                        {new Date(tool.launch_date).toLocaleDateString()}
+                        {new Date(tool.submitted_at).toLocaleDateString()}
                       </dd>
                     </div>
                   )}

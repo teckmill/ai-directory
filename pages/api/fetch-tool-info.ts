@@ -36,7 +36,7 @@ function validateTwitterHandle(handle: string): boolean {
   return /^@[a-zA-Z0-9_]{1,15}$/.test(handle)
 }
 
-async function detectAIFeatures($: cheerio.CheerioAPI): Promise<string[]> {
+async function detectAIFeatures($: cheerio.Root): Promise<string[]> {
   const features: string[] = []
   const bodyText = $('body').text().toLowerCase()
 
@@ -51,7 +51,7 @@ async function detectAIFeatures($: cheerio.CheerioAPI): Promise<string[]> {
   return features
 }
 
-async function extractPricing($: cheerio.CheerioAPI) {
+async function extractPricing($: cheerio.Root): Promise<string | null> {
   // Look for pricing in multiple locations
   const pricingSelectors = [
     'div:contains("Pricing")',
@@ -103,7 +103,7 @@ async function extractPricing($: cheerio.CheerioAPI) {
   return null
 }
 
-async function findGitHubUrl($: cheerio.CheerioAPI) {
+async function findGitHubUrl($: cheerio.Root): Promise<string | null> {
   // Look for GitHub links in multiple places
   const githubSelectors = [
     'a[href*="github.com"]',
@@ -129,7 +129,7 @@ async function findGitHubUrl($: cheerio.CheerioAPI) {
   return null
 }
 
-async function findTwitterHandle($: cheerio.CheerioAPI) {
+async function findTwitterHandle($: cheerio.Root): Promise<string | null> {
   // Look for Twitter/X links in multiple places
   const twitterSelectors = [
     'a[href*="twitter.com"]',
@@ -159,7 +159,7 @@ async function findTwitterHandle($: cheerio.CheerioAPI) {
   return null
 }
 
-async function findDocsUrl($: cheerio.CheerioAPI, baseUrl: string) {
+async function findDocsUrl($: cheerio.Root, baseUrl: string): Promise<string | null> {
   // Look for documentation links in multiple places
   const docSelectors = [
     'a:contains("Docs")',
@@ -183,7 +183,15 @@ async function findDocsUrl($: cheerio.CheerioAPI, baseUrl: string) {
   for (const path of commonPaths) {
     try {
       const docUrl = new URL(path, baseUrl).toString()
-      const response = await fetch(docUrl, { method: 'HEAD' })
+      const controller = new AbortController()
+      const timeout = setTimeout(() => controller.abort(), 3000)
+      
+      const response = await fetch(docUrl, { 
+        method: 'HEAD',
+        signal: controller.signal
+      })
+      
+      clearTimeout(timeout)
       if (response.ok) {
         return docUrl
       }
@@ -198,7 +206,7 @@ async function findDocsUrl($: cheerio.CheerioAPI, baseUrl: string) {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // Rate limiting
   try {
-    await rateLimit(req, res)
+    await rateLimit(req)
   } catch {
     return res.status(429).json({ error: 'Too many requests' })
   }
@@ -220,12 +228,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 5000)
+
     const response = await fetch(url, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; AIToolsDirectory/1.0;)'
       },
-      timeout: 5000 // 5 second timeout
+      signal: controller.signal
     })
+
+    clearTimeout(timeout)
 
     if (!response.ok) {
       throw new Error(`Failed to fetch URL: ${response.status}`)

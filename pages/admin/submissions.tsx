@@ -123,19 +123,8 @@ export default function AdminSubmissionsPage() {
       const { error: insertError } = await supabase
         .from('tools')
         .insert([{
-          name: submission.name,
-          description: submission.description,
-          category_id: submission.category_id,
-          pricing: submission.pricing,
-          features: submission.features,
-          website_url: submission.website_url,
-          logo_url: submission.logo_url,
-          pricing_details: submission.pricing_details,
-          demo_url: submission.demo_url,
-          github_url: submission.github_url,
-          documentation_url: submission.documentation_url,
-          twitter_handle: submission.twitter_handle,
-          launch_date: submission.launch_date
+          ...submission,
+          twitter_handle: submission.twitter_handle
         }])
 
       if (insertError) throw insertError

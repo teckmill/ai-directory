@@ -1,19 +1,20 @@
-export type Tool = {
+export interface Tool {
   id: string
   name: string
   description: string
+  website_url: string
+  logo_url?: string
   category_id: string
   pricing: 'free' | 'freemium' | 'paid'
-  features: string[]
-  website_url: string
-  logo_url: string
   pricing_details?: string
-  demo_url?: string
+  features?: string[]
   github_url?: string
-  documentation_url?: string
   twitter_handle?: string
-  launch_date?: string
-  created_at: string
+  documentation_url?: string
+  demo_url?: string
+  status?: 'pending' | 'approved' | 'rejected'
+  submitted_at?: string
+  enriched?: boolean
 }
 
 export type Category = {
@@ -28,4 +29,13 @@ export type Review = {
   rating: number
   comment: string
   created_at: string
+}
+
+export interface ToolSubmission extends Omit<Tool, 'id'> {
+  id: string
+  user_id: string
+  created_at: string
+  user?: {
+    email: string
+  }
 } 
